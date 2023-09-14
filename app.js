@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import encrypt from "mongoose-encryption";
@@ -8,16 +9,14 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended : true }));
 app.set("view engine","ejs");
 
-mongoose.connect("mongodb://127.0.0.1:27017/userDB");
+mongoose.connect(`mongodb://${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
 
 const userSchema = new mongoose.Schema({
     email : String,
     password : String,
 });
 
-const secret = "Thisisourlittlesecret.";
-
-userSchema.plugin(encrypt, {secret : secret, encryptedFields : ["password"] });
+userSchema.plugin(encrypt, {secret : process.env.SECRET, encryptedFields : ["password"] });
 
 const User = mongoose.model("user",userSchema);
 
